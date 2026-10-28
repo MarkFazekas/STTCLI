@@ -53,29 +53,38 @@ uv run whisperx input.m4a \
 
 # First install
 
+```shell
 mkdir ~/_fr/tts
 cd ~/_fr/tts
+```
 
 ## Project ini
+
+```shell
 uv init --bare --python 3.11
 uv python pin 3.11
+```
 
 ## CPU-only PyTorch
+
+```shell
 uv add \
   "torch==2.8.0" \
   "torchaudio==2.8.0" \
   "torchvision==0.23.0" \
   --index pytorch-cpu=https://download.pytorch.org/whl/cpu
-
+```
 ## WhisperX and dependencies
+
+```shell
 uv add whisperx
 
 sudo apt install -y ffmpeg
+```
 
 # Usage
 
-cd ~/_fr/tts
-
+```shell
 ffmpeg -i input.mp4 -map 0:a:0 -c:a copy output.m4a
 
 TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 \
@@ -89,4 +98,4 @@ uv run whisperx input.m4a \
   --output_format srt \
   --output_dir ./output \
   --print_progress True
------
+```
