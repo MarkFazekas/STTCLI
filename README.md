@@ -1,4 +1,4 @@
-# Install from this
+# Install from this for CPU
 
 ```shell
 mkdir -p ~/_fr/
@@ -15,8 +15,23 @@ uv sync --locked
 # Usage
 
 ```shell
-ffmpeg -i video1906971204.mp4 -map 0:a:0 -c:a copy output.m4a
+ffmpeg -i video2271575718.mp4 -map 0:a:0 -c:a copy video2271575718.m4a
 cp output.m4a ~/_fr/tts/input.m4a
+```
+
+## GPU Batch
+
+```shell
+export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY" \
+       AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY" \
+       AWS_DEFAULT_REGION="auto" \
+       R2_ENDPOINT="https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com" \
+       R2_BUCKET="YOUR_BUCKET"
+```
+
+```shell
+chmod +x batch.sh
+./batch.sh 2>&1 | tee batch.log
 ```
 
 ## High CPU
@@ -28,7 +43,7 @@ uv run whisperx input.m4a \
   --compute_type float32 \
   --model large-v3 \
   --language hu \
-  --threads 12 \
+  --threads 8 \
   --batch_size 4 \
   --output_format srt \
   --output_dir ./output \
