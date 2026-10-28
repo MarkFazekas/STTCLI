@@ -43,6 +43,7 @@ sed -i \
 
 uv lock
 uv sync --locked
+uv pip install hf_transfer
 
 uv tool install awscli
 ```
