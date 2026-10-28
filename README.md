@@ -21,6 +21,8 @@ cp output.m4a ~/_fr/tts/input.m4a
 
 ## GPU Batch on Runpod
 
+Select: runpod/pytorch:1.5.0-cu1281-torch280-ubuntu2404
+
 ```shell
 apt-get update
 apt-get install -y git curl ffmpeg
@@ -55,6 +57,10 @@ export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY" \
 
 ```shell
 chmod +x batch.sh
+cd /root/TTSCLI
+chmod +x batch.sh
+
+set -o pipefail
 ./batch.sh 2>&1 | tee batch.log
 ```
 
