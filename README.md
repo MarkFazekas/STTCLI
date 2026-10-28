@@ -19,7 +19,31 @@ ffmpeg -i video2271575718.mp4 -map 0:a:0 -c:a copy video2271575718.m4a
 cp output.m4a ~/_fr/tts/input.m4a
 ```
 
-## GPU Batch
+## GPU Batch on Runpod
+
+```shell
+apt-get update
+apt-get install -y git curl ffmpeg
+
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+
+cd /root
+git clone https://github.com/MarkFazekas/TTSCLI.git
+cd TTSCLI
+
+uv python install 3.11
+
+sed -i \
+  -e 's/pytorch-cpu/pytorch-cu128/g' \
+  -e 's|https://download.pytorch.org/whl/cpu|https://download.pytorch.org/whl/cu128|g' \
+  pyproject.toml
+
+uv lock
+uv sync --locked
+
+uv tool install awscli
+```
 
 ```shell
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY" \
