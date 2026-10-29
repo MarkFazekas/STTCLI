@@ -56,14 +56,23 @@ export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY" \
        R2_BUCKET="YOUR_BUCKET"
 ```
 
+Run the existing per-file mode (default), which uploads each SRT to R2 as soon as it finishes:
+
 ```shell
-chmod +x batch.sh
 cd /root/TTSCLI
 chmod +x batch.sh
-
 set -o pipefail
 ./batch.sh 2>&1 | tee batch.log
 ```
+
+For many small audio files, process **all missing files in one WhisperX process** (models loaded once):
+
+```shell
+./batch.sh --all 2>&1 | tee batch.log
+```
+
+Both modes restore completed SRTs from R2 and skip their transcription. The `--all` mode uploads results **only after the entire multi-file WhisperX run finishes**, because WhisperX writes its output files at the end; interrupted runs may need to transcribe the missing files again. It also retains all transcription results until alignment/output, so use the default per-file mode for very large batches.
+
 
 ## High CPU
 
