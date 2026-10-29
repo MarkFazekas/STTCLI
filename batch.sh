@@ -16,6 +16,12 @@ LANGUAGE="hu"
 BATCH_SIZE=16
 COMPUTE_TYPE="float16"
 
+MODE="${1:---per-file}"
+if (( $# > 1 )) || [[ "$MODE" != "--per-file" && "$MODE" != "--all" ]]; then
+    echo "Usage: $0 [--per-file|--all]" >&2
+    exit 2
+fi
+
 # ---------------------------------------------
 # Validate environment
 # ---------------------------------------------
@@ -116,8 +122,60 @@ echo "Found ${#files[@]} audio files."
 # Transcription
 # ---------------------------------------------
 
+transcribe_files() {
+    local target_dir="$1"
+    shift
+
+    TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 \
+    uv run --no-sync whisperx "$@" \
+        --device cuda \
+        --compute_type "$COMPUTE_TYPE" \
+        --model "$MODEL" \
+        --language "$LANGUAGE" \
+        --batch_size "$BATCH_SIZE" \
+        --output_format srt \
+        --output_dir "$target_dir" \
+        --print_progress True
+}
+
 completed=0
 skipped=0
+
+if [[ "$MODE" == "--all" ]]; then
+    missing=()
+    for file in "${files[@]}"; do
+        name=$(basename "${file%.*}")
+        [[ -s "output/${name}.srt" ]] || missing+=("$file")
+    done
+
+    completed=${#missing[@]}
+    skipped=$(( ${#files[@]} - completed ))
+
+    if (( completed > 0 )); then
+        echo "PROCESSING $completed missing files in one WhisperX process"
+        start_time=$SECONDS
+        tmpdir=$(mktemp -d "./.work/all.XXXXXX")
+
+        transcribe_files "$tmpdir" "${missing[@]}"
+
+        # Do not treat an incomplete multi-file run as successful.
+        for file in "${missing[@]}"; do
+            name=$(basename "${file%.*}")
+            test -s "${tmpdir}/${name}.srt" || {
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                exit 1
+            }
+        done
+
+        for file in "${missing[@]}"; do
+            name=$(basename "${file%.*}")
+            mv "${tmpdir}/${name}.srt" "output/${name}.srt"
+        done
+        rm -rf -- "$tmpdir"
+
+        echo "Batch transcription completed in $((SECONDS - start_time))s"
+    fi
+fi
 
 for file in "${files[@]}"; do
     name=$(basename "${file%.*}")
@@ -128,7 +186,9 @@ for file in "${files[@]}"; do
     echo "FILE: $file"
     echo "========================================"
 
-    if [[ -s "$result" ]]; then
+    if [[ "$MODE" == "--all" ]]; then
+        test -s "$result"
+    elif [[ -s "$result" ]]; then
         echo "SKIP transcription: $name"
         ((skipped+=1))
     else
@@ -139,16 +199,7 @@ for file in "${files[@]}"; do
         # Isolated temporary output directory
         tmpdir=$(mktemp -d "./.work/${name}.XXXXXX")
 
-        TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 \
-        uv run --no-sync whisperx "$file" \
-            --device cuda \
-            --compute_type "$COMPUTE_TYPE" \
-            --model "$MODEL" \
-            --language "$LANGUAGE" \
-            --batch_size "$BATCH_SIZE" \
-            --output_format srt \
-            --output_dir "$tmpdir" \
-            --print_progress True
+        transcribe_files "$tmpdir" "$file"
 
         temp_result="${tmpdir}/${name}.srt"
 
@@ -186,6 +237,7 @@ echo
 echo "========================================"
 echo "ALL DONE"
 echo "========================================"
+echo "Mode: $MODE"
 echo "Total files: ${#files[@]}"
 echo "Processed: $completed"
 echo "Skipped: $skipped"
