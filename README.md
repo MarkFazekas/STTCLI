@@ -1,6 +1,6 @@
 # STTCLI
 
-# Install from this for CPU
+## CPU installation
 
 ```shell
 mkdir -p ~/_fr/
