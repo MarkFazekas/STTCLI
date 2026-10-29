@@ -1,9 +1,12 @@
-# Install from this for CPU
+# STTCLI
+
+## CPU installation
 
 ```shell
 mkdir -p ~/_fr/
-git clone https://github.com/MarkFazekas/TTSCLI.git
-cd ~/_fr/TTSCLI
+cd ~/_fr/
+git clone https://github.com/MarkFazekas/STTCLI.git
+cd ~/_fr/STTCLI
 
 sudo apt update -y
 sudo apt install -y ffmpeg
@@ -16,7 +19,7 @@ uv sync --locked
 
 ```shell
 ffmpeg -i video2271575718.mp4 -map 0:a:0 -c:a copy video2271575718.m4a
-cp output.m4a ~/_fr/tts/input.m4a
+cp video2271575718.m4a ~/_fr/STTCLI/input.m4a
 ```
 
 ## GPU Batch on Runpod
@@ -31,8 +34,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
 
 cd /root
-git clone https://github.com/MarkFazekas/TTSCLI.git
-cd TTSCLI
+git clone https://github.com/MarkFazekas/STTCLI.git
+cd STTCLI
 
 uv python install 3.11
 
@@ -59,7 +62,7 @@ export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY" \
 Run the existing per-file mode (default), which uploads each SRT to R2 as soon as it finishes:
 
 ```shell
-cd /root/TTSCLI
+cd /root/STTCLI
 chmod +x batch.sh
 set -o pipefail
 ./batch.sh 2>&1 | tee batch.log
@@ -109,8 +112,8 @@ uv run whisperx input.m4a \
 # First install
 
 ```shell
-mkdir ~/_fr/tts
-cd ~/_fr/tts
+mkdir -p ~/_fr/STTCLI
+cd ~/_fr/STTCLI
 ```
 
 ## Project ini
