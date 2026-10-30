@@ -12,15 +12,34 @@ INPUT_PREFIX="audio"
 OUTPUT_PREFIX="subtitles"
 
 MODEL="large-v3"
-LANGUAGE="hu"
 BATCH_SIZE=16
 COMPUTE_TYPE="float16"
 
-MODE="${1:---per-file}"
-if (( $# > 1 )) || [[ "$MODE" != "--per-file" && "$MODE" != "--all" ]]; then
-    echo "Usage: $0 [--per-file|--all]" >&2
+MODE=""
+LANGUAGE=""
+
+usage() {
+    echo "Usage: $0 (--per-file|--all) --language LANG" >&2
     exit 2
-fi
+}
+
+while (( $# > 0 )); do
+    case "$1" in
+        --per-file|--all)
+            [[ -z "$MODE" ]] || usage
+            MODE="$1"
+            shift
+            ;;
+        --language)
+            [[ -z "$LANGUAGE" && $# -ge 2 && -n "${2:-}" && "${2:-}" != -* ]] || usage
+            LANGUAGE="$2"
+            shift 2
+            ;;
+        *) usage ;;
+    esac
+done
+
+[[ -n "$MODE" && -n "$LANGUAGE" ]] || usage
 
 # ---------------------------------------------
 # Validate environment
