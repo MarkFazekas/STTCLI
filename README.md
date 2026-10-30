@@ -85,7 +85,6 @@ For many small audio files, run all missing files in **one WhisperX process** (m
 ./batch.sh --all --language en 2>&1 | tee batch.log
 ```
 
-Both modes restore completed SRTs from R2 and skip their transcription **regardless of the requested language**. To re-transcribe a file in another language, remove its existing SRT from both R2 and the local `output/` directory (or use a separate bucket). The `--all` mode uploads results **only after the entire multi-file WhisperX run finishes**, because WhisperX writes its output files at the end; interrupted runs may need to transcribe the missing files again. It also retains all transcription results until alignment/output, so use per-file mode for very large batches.
 
 ## High CPU
 
