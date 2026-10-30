@@ -85,6 +85,7 @@ For many small audio files, run all missing files in **one WhisperX process** (m
 ./batch.sh --all --language en 2>&1 | tee batch.log
 ```
 
+The `--all` mode uploads results **only after the entire multi-file WhisperX run finishes**, because WhisperX writes its output files at the end; interrupted runs may need to transcribe the missing files again. It also retains all transcription results until alignment/output, so use per-file mode for very large batches.
 
 ## High CPU
 
