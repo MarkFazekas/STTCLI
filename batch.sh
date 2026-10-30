@@ -182,7 +182,17 @@ if [[ "$MODE" == "--all" ]]; then
             name=$(basename "${file%.*}")
             test -s "${tmpdir}/${name}.srt" || {
                 echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
-                exit 1
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
+                echo "ERROR: Missing or empty SRT: ${tmpdir}/${name}.srt" >&2
             }
         done
 
